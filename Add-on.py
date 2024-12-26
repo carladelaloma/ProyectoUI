@@ -14,9 +14,9 @@ import bpy, bmesh
 ######################## FUNCIÓN ADD-ON 1 ###############################
 def move_obj_to_worldorigin():
     for obj in bpy.context.selected_objects:
-        obj.select_set(False)
+        #obj.select_set(False)
         obj.location = (0, 0, 0)
-        obj.select_set(True)
+        #obj.select_set(True)
 
 
 ######################## FUNCIÓN ADD-ON 2 ###############################
@@ -25,7 +25,6 @@ def set_origin_in_selected():
     bpy.ops.mesh.select_mode(type="VERT")
 
     me = bpy.context.edit_object.data
-    
     bm = bmesh.from_edit_mesh(me)
 
     selected_edge = 0
@@ -66,12 +65,25 @@ def create_background_torender():
     #REDONDEZ
     bpy.ops.object.editmode_toggle()
     bpy.ops.object.shade_smooth()
-
-
-
-            
+    
     
 
+######################## FUNCIÓN ADD-ON 4 ###############################  
+def rename_sameobject(context):
+    props = context.scene.rename_props
+    name = props.name
+    start_number = props.start_number
+
+    for i, obj in enumerate(context.selected_objects):
+        obj.name = f"{name}{start_number + i}"
+        
+
+class Properties(bpy.types.PropertyGroup):
+    name: bpy.props.StringProperty(name="Nombre", default="Object_")
+    start_number: bpy.props.IntProperty(name="Número inicial", default=0)   
+            
+    
+######################## FUNCIÓN ADD-ON 5 ###############################  
 
 
 ######################## CLASE ADD-ON 1 ###############################
@@ -109,6 +121,20 @@ class MESH_OT_create_background_torender(bpy.types.Operator):
     def execute(self, context):
         create_background_torender()  # Llamar la función para crear el fondo
         return {"FINISHED"}
+    
+######################## CLASE ADD-ON 4 ###############################
+class MESH_OT_rename_sameobject(bpy.types.Operator):
+    """Renombrar el mismo objeto numerado"""
+    
+    bl_idname = "mesh.rename_sameobject"  # Para que sea único y lo pueda llamar desde el panel
+    bl_label = "Renombrar"
+    bl_options = {"REGISTER", "UNDO"}
+    
+    def execute(self, context):
+        rename_sameobject(context)  # Llamar la función para crear el fondo
+        return {"FINISHED"} 
+
+######################## CLASE ADD-ON 5 ###############################    
 
 
 class TestPanel(bpy.types.Panel):
@@ -121,40 +147,60 @@ class TestPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         
-        # Crear una fila nueva
-        row = layout.row()
-        row.label(text="Mover el objeto", icon="UNPINNED")
+        layout.label(text = "Movimientos")
         
-        # Botón para ejecutar el operador
+        layout.label(text="Mover el objeto", icon="UNPINNED")
         row = layout.row()
         row.operator("mesh.move_to_worldorigin", icon="TRACKER")  # Referencia al operador creado
-
-        row2 = layout.row()
-        row2.label(text="Mover el cursor 3D", icon = "WORLD_DATA")
         
-        row2 = layout.row()
-        row2.operator("mesh.set_origin_in_selected", icon="PROP_OFF")
+        layout.separator()
         
-        row3 = layout.row()
-        row3.label(text="Crear", icon = "PLUS")
+        layout.label(text="Mover el cursor 3D", icon = "WORLD_DATA")
+        row = layout.row()
+        row.operator("mesh.set_origin_in_selected", icon="PROP_OFF")
         
-        row3 = layout.row()
-        row3.operator("mesh.create_background_torender", icon="FILE_IMAGE")
+        layout.separator()
+        layout.separator()
+        layout.label(text = "Creaciones")
+        
+        layout.label(text = "Crear",icon = "PLUS")
+        row = layout.row()
+        row.operator("mesh.create_background_torender", icon="FILE_IMAGE")
+        
+        layout.separator()
+        layout.separator()
+        layout.label(text = "Organización")
+        
+        layout.label(text = "Renombrar objetos similares",icon = "LINENUMBERS_ON")
+        row = layout.row()
+        row.prop(context.scene.rename_props, "name")
+        row = layout.row()
+        row.prop(context.scene.rename_props, "start_number")
+        
+        
+        row = layout.row()
+        row.operator("mesh.rename_sameobject", icon="ALIGN_JUSTIFY")
 
 # REGISTRAR LA CLASE
 
 def register():
+    bpy.utils.register_class(Properties)
     bpy.utils.register_class(TestPanel)
     bpy.utils.register_class(MESH_OT_move_to_worldorigin)
     bpy.utils.register_class(MESH_OT_set_origin_in_selected)
     bpy.utils.register_class(MESH_OT_create_background_torender)
+    bpy.utils.register_class(MESH_OT_rename_sameobject)
+    bpy.types.Scene.rename_props = bpy.props.PointerProperty(type=Properties)
 
 
 def unregister():
+    bpy.utils.unregister_class(Properties)
     bpy.utils.unregister_class(TestPanel)
     bpy.utils.unregister_class(MESH_OT_move_to_worldorigin)
     bpy.utils.unregister_class(MESH_OT_set_origin_in_selected)
     bpy.utils.unregister_class(MESH_OT_create_background_torender)
+    bpy.utils.unregister_class(MESH_OT_rename_sameobject)
+    del bpy.types.Scene.rename_props
 
 if __name__ == "__main__":
     register()
