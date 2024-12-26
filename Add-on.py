@@ -137,10 +137,10 @@ class TestPanel(bpy.types.Panel):
         row2.operator("mesh.set_origin_in_selected", icon="PROP_OFF")
         
         row3 = layout.row()
-        row3.label(text="Crear", icon = "WORLD_DATA")
+        row3.label(text="Crear", icon = "PLUS")
         
         row3 = layout.row()
-        row3.operator("mesh.create_background_torender", icon="PROP_OFF")
+        row3.operator("mesh.create_background_torender", icon="FILE_IMAGE")
 
 # REGISTRAR LA CLASE
 
