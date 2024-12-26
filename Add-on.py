@@ -1,10 +1,9 @@
 bl_info = {
-    "name": "MyFirstAddon",
+    "name": "MyAdd-ons",
     "description": "Sample",
     "author": "Carla",
     "version": (0, 0, 1),
     "blender": (4, 2, 3),
-    
     "location": "View3D > Sidebar > Herramientas Artista 3D",
     "category": "Development",
 }
