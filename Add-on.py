@@ -38,6 +38,8 @@ def set_origin_in_selected():
     bpy.ops.view3d.snap_cursor_to_selected()
     bpy.ops.object.editmode_toggle()
     bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
+    bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
+
 
 
 ######################## FUNCIÓN ADD-ON 3 ###############################    
@@ -188,7 +190,7 @@ class MyPanel(bpy.types.Panel):
         
         layout.separator()
         
-        layout.label(text="Mover el cursor 3D", icon = "WORLD_DATA")
+        layout.label(text="Mover el origen del objeto", icon = "WORLD_DATA")
         row = layout.row()
         row.operator("mesh.set_origin_in_selected", icon="PROP_OFF")
         
