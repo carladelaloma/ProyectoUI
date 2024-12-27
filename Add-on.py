@@ -85,7 +85,10 @@ class Properties(bpy.types.PropertyGroup):
             
     
 ######################## FUNCIÓN ADD-ON 5 ###############################  
-
+def remove_all_modifiers():
+    for obj in bpy.context.selected_objects:
+        for modifier in obj.modifiers[:]:
+            obj.modifiers.remove(modifier)
 
 ######################## CLASE ADD-ON 1 ###############################
 class MESH_OT_set_origin_in_selected(bpy.types.Operator):
@@ -136,7 +139,17 @@ class MESH_OT_rename_sameobject(bpy.types.Operator):
         return {"FINISHED"} 
 
 ######################## CLASE ADD-ON 5 ###############################
-
+class MESH_OT_remove_all_modifiers(bpy.types.Operator):
+    """Aplicar todos los modificadores al objeto seleccionado"""
+    
+    bl_idname = "mesh.remove_all_modifiers"
+    bl_label = "Borrar todos los modificadores"
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    def execute(self, context):
+        remove_all_modifiers()
+        return {"FINISHED"} 
+    
 ######################## CLASE PIE MENU ###############################      
 class VIEW3D_MT_PIE_transform(Menu):
     bl_label = "Transform"
@@ -200,6 +213,13 @@ class MyPanel(bpy.types.Panel):
         
         row = layout.row()
         row.operator("mesh.rename_sameobject", icon="ALIGN_JUSTIFY")
+        
+        layout.separator()
+        layout.separator()
+        layout.label(text = "Aplicaciones")
+        
+        row = layout.row()
+        row.operator("mesh.remove_all_modifiers", icon="SHADERFX")
 
 # REGISTRAR LA CLASE
 
@@ -211,6 +231,7 @@ def register():
     bpy.utils.register_class(MESH_OT_create_background_torender)
     bpy.utils.register_class(MESH_OT_rename_sameobject)
     bpy.types.Scene.rename_props = bpy.props.PointerProperty(type=Properties)
+    bpy.utils.register_class(MESH_OT_remove_all_modifiers)
     
     bpy.utils.register_class(VIEW3D_MT_PIE_transform)
 
@@ -230,6 +251,7 @@ def unregister():
     bpy.utils.unregister_class(MESH_OT_create_background_torender)
     bpy.utils.unregister_class(MESH_OT_rename_sameobject)
     del bpy.types.Scene.rename_props
+    bpy.utils.unregister_class(MESH_OT_remove_all_modifiers)
     
     bpy.utils.unregister_class(VIEW3D_MT_PIE_transform)
 
