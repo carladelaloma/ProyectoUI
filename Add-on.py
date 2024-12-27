@@ -10,6 +10,7 @@ bl_info = {
 
 
 import bpy, bmesh
+from bpy.types import Menu
 
 ######################## FUNCIÓN ADD-ON 1 ###############################
 def move_obj_to_worldorigin():
@@ -134,10 +135,29 @@ class MESH_OT_rename_sameobject(bpy.types.Operator):
         rename_sameobject(context)  # Llamar la función para crear el fondo
         return {"FINISHED"} 
 
-######################## CLASE ADD-ON 5 ###############################    
+######################## CLASE ADD-ON 5 ###############################
+
+######################## CLASE PIE MENU ###############################      
+class VIEW3D_MT_PIE_transform(Menu):
+    bl_label = "Transform"
+
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+
+        # Opciones de transformación
+        pie.operator("transform.translate", text="Mover")
+        pie.operator("transform.rotate", text="Rotar")
+        pie.operator("transform.resize", text="Escalar")
+        pie.operator("object.transform_apply", text="Aplicar Transformación").location = True
+
+# Registro de atajos
+
+global_addon_keymaps = []
 
 
-class TestPanel(bpy.types.Panel):
+######################## CLASE PANEL ###############################   
+class MyPanel(bpy.types.Panel):
     bl_label = "Herramientas"   # Nombre del panel
     bl_region_type = "UI"       # Zona de la pantalla
     bl_space_type = "VIEW_3D"   # Vista 3D
@@ -185,22 +205,40 @@ class TestPanel(bpy.types.Panel):
 
 def register():
     bpy.utils.register_class(Properties)
-    bpy.utils.register_class(TestPanel)
+    bpy.utils.register_class(MyPanel)
     bpy.utils.register_class(MESH_OT_move_to_worldorigin)
     bpy.utils.register_class(MESH_OT_set_origin_in_selected)
     bpy.utils.register_class(MESH_OT_create_background_torender)
     bpy.utils.register_class(MESH_OT_rename_sameobject)
     bpy.types.Scene.rename_props = bpy.props.PointerProperty(type=Properties)
+    
+    bpy.utils.register_class(VIEW3D_MT_PIE_transform)
+
+    window_manager = bpy.context.window_manager
+    if window_manager.keyconfigs.addon:
+        keymap = window_manager.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
+        keymap_item = keymap.keymap_items.new('wm.call_menu_pie', 'T', "PRESS", ctrl=True, alt=True)
+        keymap_item.properties.name = "VIEW3D_MT_PIE_transform"
+        global_addon_keymaps.append((keymap, keymap_item))
 
 
 def unregister():
     bpy.utils.unregister_class(Properties)
-    bpy.utils.unregister_class(TestPanel)
+    bpy.utils.unregister_class(MyPanel)
     bpy.utils.unregister_class(MESH_OT_move_to_worldorigin)
     bpy.utils.unregister_class(MESH_OT_set_origin_in_selected)
     bpy.utils.unregister_class(MESH_OT_create_background_torender)
     bpy.utils.unregister_class(MESH_OT_rename_sameobject)
     del bpy.types.Scene.rename_props
+    
+    bpy.utils.unregister_class(VIEW3D_MT_PIE_transform)
+
+    window_manager = bpy.context.window_manager
+    if window_manager and window_manager.keyconfigs and window_manager.keyconfigs.addon:
+        for keymap, keymap_item in global_addon_keymaps:
+            keymap.keymap_items.remove(keymap_item)
+
+    global_addon_keymaps.clear()
 
 if __name__ == "__main__":
     register()
