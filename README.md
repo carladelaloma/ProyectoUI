@@ -1,8 +1,8 @@
 # ProyectoUI
 
-move_obj_to_worldorigin() -> Con el objeto seleccionado en modo objeto, te lo mueve al orgine del mundo.
+move_obj_to_worldorigin() -> Con el objeto seleccionado en modo objeto, te lo mueve al origen del mundo.
 
-set_origin_in_selected() -> En el modo edición, al seleccionar dos caras y dándole al botón, te mueve el cursor 3D al centro de la selección de caras
+set_origin_in_selected() -> En el modo edición, al seleccionar dos caras y dándole al botón, te mueve el origen al centro de la selección de las caras. Es muy eficiente cuando quieres cambiar el eje de rotación o traslación. En vez de mover el cursor 3D a la selección y luego mover el origen al cursor, este botón recoge todos esos pasos.
 
 create_background_torender() -> Para mostrar el producto final de uno o varios modelados en 3D en un render final, se necesita un fondo e iluminación. Como la iluminación depende de los materiales de los objetos y de cada usuario, se ha creado un botón para crear el fondo.
 
