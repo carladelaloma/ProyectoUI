@@ -92,7 +92,7 @@ def remove_all_modifiers():
         for modifier in obj.modifiers[:]:
             obj.modifiers.remove(modifier)
 
-######################## CLASE ADD-ON 1 ###############################
+######################## CLASE ADD-ON 2 ###############################
 class MESH_OT_set_origin_in_selected(bpy.types.Operator):
     """Colocar el origen en el medio de las dos caras seleccionadas"""
     
@@ -104,7 +104,7 @@ class MESH_OT_set_origin_in_selected(bpy.types.Operator):
         set_origin_in_selected()  # Llamar la función para mover al centro de las dos caras
         return {"FINISHED"}
 
-######################## CLASE ADD-ON 2 ###############################
+######################## CLASE ADD-ON 1 ###############################
 class MESH_OT_move_to_worldorigin(bpy.types.Operator):
     """Mover el origen de un objeto al del mundo"""
     
